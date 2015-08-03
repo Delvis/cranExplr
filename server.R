@@ -3,6 +3,8 @@ library(shinydashboard)
 library(caret)
 library(mda)
 library(earth)
+library(tidyr)
+library(rCharts)
 cranid <<- readRDS("./data/cranid.rds")
 namekeeper <- levels(cranid$Ancestry2)
 fdaFit1 <<- readRDS("./data/model.rds")
@@ -21,10 +23,12 @@ shinyServer(function(input, output) {
       ancesCalc <<- predict(fdaFit1, target, type = "prob")
       names(ancesCalc) <<- namekeeper
       par(mar = c(9,3,1,1))
+      #       ancesCalc <<- gather(ancesCalc)
+      #       names(ancesCalc) <<- c("Groups", "Probability")
       barplot(as.matrix(ancesCalc), main = "Population groups",
               ylim = c(0,1), las=2, cex.names = 0.8)
-      #       ancesCalc <<- gather(ancesCalc)
-      #       names(ancesCalc) <<- c("Probability", "Groups")
+      # rPlot(Probability ~ Groups, data = ancesCalc, type = "bar")
+      
    })
    output$plot <- renderPlot({
       slideValues()
